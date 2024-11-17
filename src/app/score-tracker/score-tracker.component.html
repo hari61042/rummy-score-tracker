@@ -1,40 +1,72 @@
 <div class="main-container">
-  <div class="header" *ngIf="gameStarted" style="margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+  <div
+    class="header"
+    *ngIf="gameStarted"
+    style="
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    "
+  >
     <!-- Target Score Input Section -->
-    <div style="display: flex; align-items: center;">
-      <input 
-        type="number" 
-        [(ngModel)]="targetScore" 
-        placeholder="Target Score" 
+    <div style="display: flex; align-items: center">
+      <input
+        type="number"
+        [(ngModel)]="targetScore"
+        placeholder="Target Score"
         pInputText
-        style="width: 240px; margin-right: 10px;" 
+        style="width: 240px; margin-right: 10px"
       />
-      <button pButton label="Update Target" icon="pi pi-check" class="p-button-success" (click)="updateTarget()"></button>
+      <button
+        pButton
+        label="Update Target"
+        icon="pi pi-check"
+        class="p-button-success"
+        (click)="updateTarget()"
+      ></button>
     </div>
-  
+
     <!-- Reset Game Button -->
     <div>
-      <button pButton label="Reset Game" icon="pi pi-refresh" class="p-button-danger" (click)="resetGame()"></button>
+      <button
+        pButton
+        label="Reset Game"
+        icon="pi pi-refresh"
+        class="p-button-danger"
+        (click)="resetGame()"
+      ></button>
     </div>
   </div>
-  
+
   <!-- Add Player Form -->
   <div class="add-player-form" *ngIf="!gameStarted">
     <div class="card">
       <h3>Add Players</h3>
       <div class="input-button-group">
-        <input 
-          [(ngModel)]="newPlayerName" 
-          pInputText 
-          placeholder="Enter Player Name" 
-          (keyup.enter)="addPlayer()" 
-          #playerNameInput 
+        <input
+          [(ngModel)]="newPlayerName"
+          pInputText
+          placeholder="Enter Player Name"
+          (keyup.enter)="addPlayer()"
+          #playerNameInput
           (input)="toUpperCase($event)"
-          [ngModelOptions]="{standalone: true}" 
+          [ngModelOptions]="{ standalone: true }"
         />
         <div class="button-group">
-          <button pButton label="Add Player" icon="pi pi-plus" (click)="addPlayer()"></button>
-          <button pButton label="Start Game" icon="pi pi-play" (click)="startGame()" [disabled]="players.length <= 1"></button>
+          <button
+            pButton
+            label="Add Player"
+            icon="pi pi-plus"
+            (click)="addPlayer()"
+          ></button>
+          <button
+            pButton
+            label="Start Game"
+            icon="pi pi-play"
+            (click)="startGame()"
+            [disabled]="players.length <= 1"
+          ></button>
         </div>
       </div>
     </div>
@@ -45,17 +77,27 @@
     <div class="player-scores" *ngIf="players.length > 0">
       <h3>Player Total Scores</h3>
       <div class="scores-row">
-        <div *ngFor="let player of players" class="score-item" [ngClass]="{'eliminated': player.totalScore >= targetScore}">
+        <div *ngFor="let player of players; let i = index" class="score-item" [ngClass]="{'eliminated': player.totalScore >= targetScore}">
+          <!-- Delete Icon Button -->
+          <button 
+            *ngIf="!gameStarted"
+            pButton 
+            icon="pi pi-trash" 
+            class="delete-button p-button-rounded p-button-danger p-button-text" 
+            (click)="deletePlayer(i)" 
+            aria-label="Delete Player">
+          </button>
+        
           <h4>{{ player.name }}</h4>
           <p>Total: <span class="score-total">{{ player.totalScore }}</span></p>
           <!-- Display watermark when eliminated -->
           <div *ngIf="player.totalScore >= targetScore" class="watermark">Eliminated</div>
         </div>
+        
       </div>
     </div>
 
-    <!-- Player Statistics Section -->
-    <div class="score-stats" *ngIf="players.length > 0">
+    <div class="score-stats" *ngIf="players.length > 0 && gameStarted">
       <h3 style="color: #b94df0;">Player Statistics</h3>
       <p><strong>Highest Score:</strong> {{ highestScorePlayer.name || 'N/A' }} ({{ highestScorePlayer.totalScore || 0 }})</p>
       <p><strong>Lowest Score:</strong> {{ lowestScorePlayer.name || 'N/A' }} ({{ lowestScorePlayer.totalScore || 0 }})</p>
@@ -67,7 +109,7 @@
   <div class="enter-scores" *ngIf="gameStarted">
     <div class="card">
       <h3>Enter Scores</h3>
-      <p-table [value]="rounds" [tableStyle]="{ 'width': '100%' }">
+      <p-table [value]="rounds" [tableStyle]="{ width: '100%' }">
         <ng-template pTemplate="header">
           <tr>
             <th>Round</th>
@@ -91,13 +133,31 @@
           </tr>
         </ng-template>
       </p-table>
-      <button style="margin-bottom: 4px;" pButton label="Add Round" icon="pi pi-plus" (click)="addRound()" class="p-button-primary"></button>
+      <button
+        style="margin-bottom: 4px"
+        pButton
+        label="Add Round"
+        icon="pi pi-plus"
+        (click)="addRound()"
+        class="p-button-primary"
+      ></button>
     </div>
   </div>
 
   <!-- Winner Dialog -->
-  <p-dialog header="Congratulations!" [(visible)]="winnerDialogVisible" [closable]="false" [modal]="true" styleClass="winner-dialog">
+  <p-dialog
+    header="Congratulations!"
+    [(visible)]="winnerDialogVisible"
+    [closable]="false"
+    [modal]="true"
+    styleClass="winner-dialog"
+  >
     <p>Congratulations, {{ winnerName }}! You are the winner!</p>
-    <button pButton label="Close" icon="pi pi-times" (click)="closeWinnerDialog()"></button>
+    <button
+      pButton
+      label="Close"
+      icon="pi pi-times"
+      (click)="closeWinnerDialog()"
+    ></button>
   </p-dialog>
 </div>

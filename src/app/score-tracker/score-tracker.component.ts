@@ -43,6 +43,23 @@ export class ScoreTrackerComponent implements AfterViewInit {
     }
   }
 
+  //Code to delete the player
+  deletePlayer(index: number) {
+    // Remove the player from the players array
+    this.players.splice(index, 1);
+  
+    // Remove the corresponding scores from each round
+    this.rounds.forEach(round => round.splice(index, 1));
+  
+    // Check if the game should continue or be reset
+    if (this.players.length <= 1 && this.gameStarted) {
+      this.gameStarted = false;
+      this.winnerDialogVisible = false;
+      this.resetGame();
+    }
+  }
+  
+
   startGame() {
     if (this.players.length > 0) {
       this.gameStarted = true;

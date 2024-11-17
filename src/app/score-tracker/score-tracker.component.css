@@ -140,6 +140,26 @@
 button[disabled] {
   background-color: #ddd !important;
 }
+/* Delete button styling */
+.delete-button {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 3;
+  font-size: 1.2rem;
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  color: #f44336; /* Red color for delete icon */
+}
+
+/* Ensure the delete button does not interfere with card content */
+.score-item {
+  position: relative; /* For positioning the delete button */
+  padding-top: 2rem; /* Space for the delete button */
+}
+
 
 /* Styling for the player names and total scores */
 .score-item h4 {
