@@ -10,6 +10,7 @@
 
 .header {
   margin-top: 1rem;
+  margin-left: 0.25rem;
 }
 
 .player-info {
@@ -44,6 +45,7 @@
 }
 
 .score-item {
+  position: relative; /* To position the watermark on top */
   padding: 1rem;
   background-color: #f9f9f9;
   border-radius: 1rem;
@@ -51,8 +53,38 @@
   width: 8rem; /* Reduced width of score cards */
   box-shadow: 0.4rem 0.6rem rgba(0, 0, 0, 0.1);
   margin-bottom: 1rem; /* Dynamic space between rows */
+  overflow: hidden; /* Prevent watermark from going outside */
 }
 
+/* When player is eliminated */
+.eliminated {
+  position: relative;
+}
+
+/* The overlay for the eliminated player card */
+.eliminated .content {
+  filter: blur(3px); /* Apply blur only to the content */
+  pointer-events: none; /* Prevent interaction with the blurred content */
+}
+
+/* Watermark for the "Eliminated" state */
+.eliminated .watermark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotate(-45deg); /* Position the watermark diagonally */
+  width: 100%; /* Cover the card */
+  height: 100%; /* Cover the card */
+  background-image: url('https://thumbs.dreamstime.com/b/eliminated-stamp-label-transparent-background-round-sign-343722492.jpg'); /* Add the watermark image */
+  background-size: contain; /* Ensure the image fits within the card */
+  background-position: center center;
+  background-repeat: no-repeat;
+  z-index: 2; /* Ensure watermark appears above the blurred content */
+  pointer-events: none; /* Ensure the watermark doesn't interfere with interactions */
+  opacity: 0.8; /* Make the watermark semi-transparent */
+}
+
+/* Add styles for add-player form and input buttons */
 .add-player-form {
   display: flex;
   justify-content: center;

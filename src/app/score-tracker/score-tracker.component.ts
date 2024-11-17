@@ -17,6 +17,9 @@ export class ScoreTrackerComponent implements AfterViewInit {
   rounds: number[][] = [];
   newPlayerName = '';
   gameStarted = false;
+  targetScore: number = 200;  
+  winnerDialogVisible = false;
+  winnerName: string = '';
 
   ngAfterViewInit() {
     if (this.playerNameInput) {
@@ -55,24 +58,34 @@ export class ScoreTrackerComponent implements AfterViewInit {
   }
 
   updateScores(roundIndex: number, playerIndex: number) {
+    if (this.isPlayerEliminated(this.players[playerIndex])) {
+      return;  // Skip if the player is eliminated
+    }
+
     const score = this.rounds[roundIndex][playerIndex];
     // Update player's scores array
     this.players[playerIndex].scores[roundIndex] = score;
-  
+
     // Recalculate the total score for the player
     this.players[playerIndex].totalScore = this.players[playerIndex].scores.reduce((acc, score) => acc + score, 0);
-  
+
     // Automatically add a new round if all players have entered a score for the current round
     if (roundIndex === this.rounds.length - 1 && this.rounds[roundIndex].every(s => s !== undefined)) {
       this.addRound();
     }
+
+    this.checkForEliminations();  // Check for eliminated players after each score update
   }
-  
 
   resetGame() {
     this.players = [];
     this.rounds = [];
     this.gameStarted = false;
+  }
+
+  updateTarget() {
+    // Allow updating of the target score
+    console.log("Target score updated to", this.targetScore);
   }
 
   get highestScorePlayer() {
@@ -88,6 +101,25 @@ export class ScoreTrackerComponent implements AfterViewInit {
     this.newPlayerName = event.target.value.toUpperCase();
   }
 
+  // Check if the player has reached the target score
+  isPlayerEliminated(player: Player): boolean {
+    return player.totalScore >= this.targetScore;
+  }
+
+  // Check if only one player is left and show the winner dialog
+  checkForEliminations() {
+    const remainingPlayers = this.players.filter(player => player.totalScore < this.targetScore);
+    if (remainingPlayers.length === 1) {
+      this.winnerName = remainingPlayers[0].name;
+      this.winnerDialogVisible = true;
+    }
+  }
+
+  // Close winner dialog
+  closeWinnerDialog() {
+    this.winnerDialogVisible = false;
+  }
+
   // Handle score input, only allow numeric values
   onScoreInput(event: any, roundIndex: number, playerIndex: number) {
     let value = event.target.value;
@@ -97,5 +129,10 @@ export class ScoreTrackerComponent implements AfterViewInit {
 
     // Update the score if the input is valid
     this.rounds[roundIndex][playerIndex] = value ? parseInt(value, 10) : 0;
+  }
+
+  // Check if the player can still enter scores (editable if total score < target)
+  isScoreEditable(player: Player): boolean {
+    return player.totalScore < this.targetScore;
   }
 }
