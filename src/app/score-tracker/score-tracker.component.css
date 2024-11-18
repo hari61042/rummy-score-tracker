@@ -75,7 +75,7 @@
   transform: translate(-50%, -50%) rotate(-45deg); /* Position the watermark diagonally */
   width: 100%; /* Cover the card */
   height: 100%; /* Cover the card */
-  background-image: url('https://thumbs.dreamstime.com/b/eliminated-stamp-label-transparent-background-round-sign-343722492.jpg'); /* Add the watermark image */
+  background-image: url('../../assets/image.png');
   background-size: contain; /* Ensure the image fits within the card */
   background-position: center center;
   background-repeat: no-repeat;
