@@ -21,7 +21,7 @@
 }
 
 .player-scores {
-  flex: 8; /* Occupy 80% of the space */
+  flex: 7; /* Occupy 70% of the space */
   background: white;
   padding: 2rem;
   border-radius: 1rem;
@@ -30,7 +30,7 @@
 }
 
 .score-stats {
-  flex: 2; /* Occupy 20% of the space */
+  flex: 3; /* Occupy 30% of the space */
   background: white;
   padding: 2rem;
   border-radius: 1rem;

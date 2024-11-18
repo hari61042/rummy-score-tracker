@@ -77,30 +77,54 @@
     <div class="player-scores" *ngIf="players.length > 0">
       <h3>Player Total Scores</h3>
       <div class="scores-row">
-        <div *ngFor="let player of players; let i = index" class="score-item" [ngClass]="{'eliminated': player.totalScore >= targetScore}">
+        <div
+          *ngFor="let player of players; let i = index"
+          class="score-item"
+          [ngClass]="{ eliminated: player.totalScore >= targetScore }"
+        >
           <!-- Delete Icon Button -->
-          <button 
+          <button
             *ngIf="!gameStarted"
-            pButton 
-            icon="pi pi-trash" 
-            class="delete-button p-button-rounded p-button-danger p-button-text" 
-            (click)="deletePlayer(i)" 
-            aria-label="Delete Player">
-          </button>
-        
+            pButton
+            icon="pi pi-trash"
+            class="delete-button p-button-rounded p-button-danger p-button-text"
+            (click)="deletePlayer(i)"
+            aria-label="Delete Player"
+          ></button>
+
           <h4>{{ player.name }}</h4>
-          <p>Total: <span class="score-total">{{ player.totalScore }}</span></p>
+          <p>
+            Total: <span class="score-total">{{ player.totalScore }}</span>
+          </p>
           <!-- Display watermark when eliminated -->
-          <div *ngIf="player.totalScore >= targetScore" class="watermark">Eliminated</div>
+          <div *ngIf="player.totalScore >= targetScore" class="watermark">
+            Eliminated
+          </div>
         </div>
-        
       </div>
     </div>
 
     <div class="score-stats" *ngIf="players.length > 0 && gameStarted">
-      <h3 style="color: #b94df0;">Player Statistics</h3>
-      <p><strong>Highest Score:</strong> {{ highestScorePlayer.name || 'N/A' }} ({{ highestScorePlayer.totalScore || 0 }})</p>
-      <p><strong>Lowest Score:</strong> {{ lowestScorePlayer.name || 'N/A' }} ({{ lowestScorePlayer.totalScore || 0 }})</p>
+      <h3 style="color: #b94df0">Player Statistics</h3>
+
+      <p-chart
+        type="bar"
+        [data]="barChartData"
+        [options]="barChartOptions"
+        style="width: 100%; max-width: 600px"
+      ></p-chart>
+
+      <p>
+        <strong>Highest Score:</strong>
+        {{ highestScorePlayer.name || "N/A" }} ({{
+          highestScorePlayer.totalScore || 0
+        }})
+      </p>
+      <p>
+        <strong>Lowest Score:</strong> {{ lowestScorePlayer.name || "N/A" }} ({{
+          lowestScorePlayer.totalScore || 0
+        }})
+      </p>
       <p><strong>Target Score:</strong> {{ targetScore }}</p>
     </div>
   </div>
@@ -114,6 +138,7 @@
           <tr>
             <th>Round</th>
             <th *ngFor="let player of players">{{ player.name }}</th>
+            <th>Actions</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-roundIndex="rowIndex">
@@ -130,11 +155,21 @@
                 [value]="rounds[roundIndex][i] ? rounds[roundIndex][i] : ''"
               />
             </td>
+            <!-- Delete Round Button -->
+            <td>
+              <button
+                pButton
+                icon="pi pi-minus"
+                class="p-button-danger p-button-text"
+                (click)="deleteRound(roundIndex)"
+                aria-label="Delete Round"
+              ></button>
+            </td>
           </tr>
         </ng-template>
       </p-table>
       <button
-        style="margin-bottom: 4px"
+        style="margin-bottom: 4px;margin-top: 4px;"
         pButton
         label="Add Round"
         icon="pi pi-plus"

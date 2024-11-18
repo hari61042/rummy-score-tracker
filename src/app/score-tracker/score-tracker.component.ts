@@ -21,6 +21,14 @@ export class ScoreTrackerComponent implements AfterViewInit {
   winnerDialogVisible = false;
   winnerName: string = '';
 
+  barChartData: any;
+  barChartOptions: any;
+
+
+  ngOnInit() {
+    this.initializeBarChart();
+  }
+
   ngAfterViewInit() {
     if (this.playerNameInput) {
       this.playerNameInput.nativeElement.focus();
@@ -76,22 +84,19 @@ export class ScoreTrackerComponent implements AfterViewInit {
 
   updateScores(roundIndex: number, playerIndex: number) {
     if (this.isPlayerEliminated(this.players[playerIndex])) {
-      return;  // Skip if the player is eliminated
+      return;
     }
-
+  
     const score = this.rounds[roundIndex][playerIndex];
-    // Update player's scores array
     this.players[playerIndex].scores[roundIndex] = score;
-
-    // Recalculate the total score for the player
     this.players[playerIndex].totalScore = this.players[playerIndex].scores.reduce((acc, score) => acc + score, 0);
-
-    // Automatically add a new round if all players have entered a score for the current round
+  
+    this.updateBarChart();
     if (roundIndex === this.rounds.length - 1 && this.rounds[roundIndex].every(s => s !== undefined)) {
       this.addRound();
     }
-
-    this.checkForEliminations();  // Check for eliminated players after each score update
+  
+    this.checkForEliminations();
   }
 
   resetGame() {
@@ -140,16 +145,67 @@ export class ScoreTrackerComponent implements AfterViewInit {
   // Handle score input, only allow numeric values
   onScoreInput(event: any, roundIndex: number, playerIndex: number) {
     let value = event.target.value;
-
-    // Only allow numbers (regular expression replaces anything that isn't a number)
     value = value.replace(/[^0-9]/g, '');
-
-    // Update the score if the input is valid
     this.rounds[roundIndex][playerIndex] = value ? parseInt(value, 10) : 0;
   }
 
-  // Check if the player can still enter scores (editable if total score < target)
   isScoreEditable(player: Player): boolean {
     return player.totalScore < this.targetScore;
+  }
+
+  initializeBarChart() {
+    const playerNames = this.players.map((player) => player.name);
+    const playerScores = this.players.map((player) => player.totalScore);
+
+    // Bar Chart Data
+    this.barChartData = {
+      labels: playerNames,
+      datasets: [
+        {
+          label: 'Total Scores',
+          data: playerScores,
+          backgroundColor: ['#42A5F5', '#66BB6A', '#FFA726', '#FF7043', '#AB47BC'],
+          borderColor: ['#1E88E5', '#43A047', '#FB8C00', '#F4511E', '#8E24AA'],
+          borderWidth: 1,
+        },
+      ],
+    };
+
+    // Bar Chart Options
+    this.barChartOptions = {
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+        },
+      },
+      scales: {
+        x: {
+          beginAtZero: true,
+        },
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            // text: 'Score',
+          },
+        },
+      },
+      responsive: true,
+      maintainAspectRatio: false,
+    };
+  }
+
+  updateBarChart() {
+    this.initializeBarChart();
+  }
+
+  deleteRound(roundIndex: number) {
+    this.rounds.splice(roundIndex, 1);
+    this.players.forEach((player, playerIndex) => {
+      player.scores = this.rounds.map((round) => round[playerIndex] || 0);
+      player.totalScore = player.scores.reduce((acc, score) => acc + score, 0);
+    });
+    this.checkForEliminations();
   }
 }
